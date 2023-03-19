@@ -1,7 +1,7 @@
 <launch>
 
     <!-- Launch usb-cam node -->
-    <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <node name="usb_cam" pkg="usb_cam" type="usb_cam_node">
 
         <param name="video_device" value="/dev/video0" />
 
@@ -23,16 +23,16 @@
     <node pkg="yolov8_ros" type="yolo_ros.py" name="yolov8_node" output="screen">
 
         <!-- Download the official weights from the original repo -->
-        <param name="weights_path" type="str" value="/home/vboxuser/new_ws/src/yolov8_ros/model/yolov8n.pt"/>
+        <!-- <param name="weights_path" type="str" value="/home/vboxuser/new_ws/src/yolov8_ros/model/yolov8n.pt"/> -->
 
         <!-- Path to a class_labels.txt file containing your desired class labels. The i-th entry corresponds to the i-th class id. For example, in coco class label 0 corresponds to 'person'. Files for the coco and berkeley deep drive datasets are provided in the 'class_labels/' directory. If you leave it empty then no class labels are visualized.-->
-        <param name="classes_path" type="str" value="/home/vboxuser/new_ws/src/yolov8_ros/model/coco.txt" />
+        <!-- <param name="classes_path" type="str" value="/home/vboxuser/new_ws/src/yolov8_ros/model/coco.txt" /> -->
 
         <!-- topic name to subscribe to -->
         <param name="img_topic" type="str" value="/usb_cam/image_raw" />
 
         <!-- topic name for the detection output -->
-        <param name="bbox_topic" type="str" value="yolov8_visualization" />
+        <param name="bbox_topic" type="str" value="yolov8_bbox_center" />
 
         <param name="queue_size" type="int" value="1" />
 

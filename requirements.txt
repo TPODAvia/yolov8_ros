@@ -1,3 +1,5 @@
 ultralytics
 torch
-numpy
+numpy == 1.20
+importlib-resources
+pandas

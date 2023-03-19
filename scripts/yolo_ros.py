@@ -63,11 +63,11 @@ class yolo_class:
             # print(bboxes)
 
     try:
-
-        x1 = boxes[0].xyxy[0][3].item()
-        x2 = boxes[0].xyxy[0][2].item()
+        
+        x1 = boxes[0].xyxy[0][0].item()
         y1 = boxes[0].xyxy[0][1].item()
-        y2 = boxes[0].xyxy[0][0].item()
+        x2 = boxes[0].xyxy[0][2].item()
+        y2 = boxes[0].xyxy[0][3].item()
 
         w = int(round(x2 - x1))
         h = int(round(y2 - y1))
@@ -112,8 +112,9 @@ def main(args):
     img_topic = rospy.get_param("~img_topic", "/usb_cam/image_raw")
     bbox_topic = rospy.get_param("~bbox_topic", "/yolo_bbox" )
     queue_size = rospy.get_param("~queue_size", 1)
-    visualize = rospy.get_param("~visualize", False)
-
+    visualize = rospy.get_param("~visualize", False) # IDK why but open cv visualisation won't work :(
+    
+    
     yolo_class(weights_path,classes_path,img_topic,bbox_topic,queue_size,visualize)
 
 
