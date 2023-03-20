@@ -73,6 +73,8 @@ class yolo_class:
         h = int(round(y2 - y1))
         cx = int(round(x1 + w / 2))
         cy = int(round(y1 + h / 2))
+        offset_cx = 640/2 - cx
+        offset_cy = 480/2 - cy
 
         bounding_boxes = BoundingBox2D()
 
@@ -83,10 +85,11 @@ class yolo_class:
 
         bounding_boxes.size_x = w
         bounding_boxes.size_y = h
-
+        
+        # offset from center in pixels
         bounding_boxes.center = Pose2D()
-        bounding_boxes.center.x = cx
-        bounding_boxes.center.y = cy
+        bounding_boxes.center.x = offset_cx
+        bounding_boxes.center.y = offset_cy
 
         # print(bounding_boxes)
         self.boundingbox_publisher.publish(bounding_boxes)  
@@ -110,7 +113,7 @@ def main(args):
     weights_path = rospy.get_param("~weights_path", "")
     classes_path = rospy.get_param("~classes_path", "")
     img_topic = rospy.get_param("~img_topic", "/usb_cam/image_raw")
-    bbox_topic = rospy.get_param("~bbox_topic", "/yolo_bbox" )
+    bbox_topic = rospy.get_param("~center_offset_topic", "/yolo_bbox" )
     queue_size = rospy.get_param("~queue_size", 1)
     visualize = rospy.get_param("~visualize", False) # IDK why but open cv visualisation won't work :(
     

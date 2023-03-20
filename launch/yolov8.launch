@@ -32,7 +32,7 @@
         <param name="img_topic" type="str" value="/usb_cam/image_raw" />
 
         <!-- topic name for the detection output -->
-        <param name="bbox_topic" type="str" value="yolov8_bbox_center" />
+        <param name="center_offset_topic" type="str" value="yolov8_offset_center" />
 
         <param name="queue_size" type="int" value="1" />
 
