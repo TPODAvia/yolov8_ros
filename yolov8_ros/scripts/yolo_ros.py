@@ -107,10 +107,10 @@ def main(args):
 
     weights_path = rospy.get_param("~weights_path", "")
     classes_path = rospy.get_param("~classes_path", "")
-    img_topic = rospy.get_param("~img_topic", "/usb_cam/image_raw")
-    depth_topic = rospy.get_param("~center_depth_topic", "/camera/depth/image_raw" )
-    queue_size = rospy.get_param("~queue_size", 1)
-    visualize = rospy.get_param("~visualize", False)
+    img_topic =    rospy.get_param("~img_topic", "/usb_cam/image_raw")
+    depth_topic =  rospy.get_param("~center_depth_topic", "/camera/depth/image_raw" )
+    queue_size =   rospy.get_param("~queue_size", 1)
+    visualize =    rospy.get_param("~visualize", False)
     yolo_class(weights_path,classes_path,img_topic,depth_topic,queue_size,visualize)
 
     rospy.loginfo("YOLOv8 initialization complete")
