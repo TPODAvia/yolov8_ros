@@ -12,6 +12,8 @@ add_message_files(
         FILES
         BoundingBox.msg
         BoundingBoxes.msg
+        DepthPoint.msg
+        DepthPoints.msg
 )
 
 generate_messages(

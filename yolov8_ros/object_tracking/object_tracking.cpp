@@ -33,12 +33,12 @@ prometheus_msgs::DetectionInfo Detection_raw;          //目标位置[机体系�
 Eigen::Vector3f pos_body_frame;
 Eigen::Vector3f pos_body_enu_frame;     //原点位于质心，x轴指向前方，y轴指向左，z轴指向上的坐标系
 Eigen::Vector3f pos_des_prev;
-float kpx_track,kpy_track,kpz_track;                                                 //控制参数 - 比例参数
+float kpx_track,kpy_track,kpz_track;                                        //控制参数 - 比例参数
 float start_point_x,start_point_y,start_point_z,start_yaw;
-bool is_detected = false;                                          // 是否检测到目标标志
-int num_count_vision_lost = 0;                                                      //视觉丢失计数器
-int num_count_vision_regain = 0;                                                      //视觉丢失计数器
-int Thres_vision = 0;                                                          //视觉丢失计数器阈值
+bool is_detected = false;                                                   // 是否检测到目标标志
+int num_count_vision_lost = 0;                                              //视觉丢失计数器
+int num_count_vision_regain = 0;                                            //视觉丢失计数器
+int Thres_vision = 0;                                                       //视觉丢失计数器阈值
 Eigen::Vector3f camera_offset;
 //---------------------------------------Track---------------------------------------------
 float distance_to_setpoint;
@@ -46,8 +46,8 @@ Eigen::Vector3f tracking_delta;
 //---------------------------------------Output---------------------------------------------
 prometheus_msgs::ControlCommand Command_Now;                               //发送给控制模块 [px4_pos_controller.cpp]的命令
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>声 明 函 数<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-void printf_param();                                                                 //打印各项参数以供检查
-void printf_result();                                                                 //打印函数
+void printf_param();                                                       //打印各项参数以供检查
+void printf_result();                                                      //打印函数
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>回 调 函 数<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 void vision_cb(const prometheus_msgs::DetectionInfo::ConstPtr &msg)
 {

@@ -1,0 +1,407 @@
+<?xml version='1.0'?>
+<sdf version="1.4">
+  <model name="tank">
+
+    <link name="base_link">
+      <self_collide>0</self_collide>
+      <pose>0 0 0.04 0 0 0</pose>
+
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>10.0</mass>
+        <inertia>
+          <ixx>0.2</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.3</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.4</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="base_link_collision">
+        <geometry>
+          <box>
+            <size>0.32 0.16 0.1</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="base_link_visual">
+        <geometry>
+          <box>
+            <size>0.32 0.16 0.1</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/DarkYellow</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+
+    </link>
+
+
+    <!-- Wheel 1 -->
+
+    <link name="drum1">
+      <self_collide>1</self_collide>
+      <pose>0.1 0.1 0 1.57079632679 0 0</pose>
+
+      <inertial>
+        <pose>0 0 0 1.57 0 0</pose>
+        <mass>0.4</mass>
+        <inertia>
+          <ixx>0.0003</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0003</iyy>
+          <iyz>0</iyz>
+          <izz>0.0004</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="drum1_collision">
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.03</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <visual name="drum1_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.03</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/DarkGrey</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+
+    </link>
+
+    <joint type="revolute" name="drum_joint1">
+      <pose>0 0 0 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>drum1</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+      </axis>
+    </joint>
+
+
+
+
+
+
+
+
+
+    <!-- Wheel 2 -->
+
+    <link name="drum2">
+      <self_collide>1</self_collide>
+      <pose>0.1 -0.1 0 1.57079632679 0 0</pose>
+
+      <inertial>
+        <pose>0 0 0 1.57 0 0</pose>
+        <mass>0.4</mass>
+        <inertia>
+          <ixx>0.0003</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0003</iyy>
+          <iyz>0</iyz>
+          <izz>0.0004</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="drum2_collision">
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.03</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <visual name="drum2_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.03</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/DarkGrey</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+
+    </link>
+
+    <joint type="revolute" name="drum_joint2">
+      <pose>0 0 0 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>drum2</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+      </axis>
+    </joint>
+
+
+
+
+
+
+
+
+
+    <!-- Wheel 3 -->
+
+    <link name="drum3">
+      <self_collide>1</self_collide>
+      <pose>-0.12 0.1 0 1.57079632679 0 0</pose>
+
+      <inertial>
+        <pose>0 0 0 1.57 0 0</pose>
+        <mass>0.4</mass>
+        <inertia>
+          <ixx>0.0003</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0003</iyy>
+          <iyz>0</iyz>
+          <izz>0.0004</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="drum3_collision">
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.03</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <visual name="drum3_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.03</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/DarkGrey</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+
+    </link>
+
+    <joint type="revolute" name="drum_joint3">
+      <pose>0 0 0 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>drum3</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+      </axis>
+    </joint>
+
+
+
+
+
+
+
+
+
+    <!-- Wheel 4 -->
+
+    <link name="drum4">
+      <self_collide>1</self_collide>
+      <pose>-0.12 -0.1 0 1.57079632679 0 0</pose>
+
+      <inertial>
+        <pose>0 0 0 1.57 0 0</pose>
+        <mass>0.4</mass>
+        <inertia>
+          <ixx>0.0003</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0003</iyy>
+          <iyz>0</iyz>
+          <izz>0.0004</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="drum4_collision">
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.03</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <visual name="drum4_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.03</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/DarkGrey</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+
+    </link>
+
+    <joint type="revolute" name="drum_joint4">
+      <pose>0 0 0 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>drum4</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+      </axis>
+    </joint>
+
+
+
+
+
+
+
+
+
+    <!-- Detph Camera -->
+
+    <link name="realsense_link">
+      <pose>0 0 0.1 0 0 3.14</pose>
+
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.015</mass>
+        <inertia>
+          <ixx>1e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+
+      <visual name='visual'>
+        <geometry>
+          <box>
+            <size>0.01 0.01 0.01</size>
+          </box>
+        </geometry>
+      </visual>
+
+      <sensor name="depth_camera" type="depth">
+        <update_rate>30</update_rate>
+        <camera>
+          <horizontal_fov>1.02974</horizontal_fov>
+          <image>
+            <format>R8G8B8</format>
+            <width>640</width>
+            <height>480</height>
+          </image>
+          <clip>
+            <near>0.5</near>
+            <far>18</far>
+          </clip>
+        </camera>
+        <plugin filename="libgazebo_ros_openni_kinect.so" name="camera_controller">
+          <cameraName>camera</cameraName>
+          <alwaysOn>true</alwaysOn>
+          <updateRate>20</updateRate>
+          <pointCloudCutoff>0.2</pointCloudCutoff>
+          <pointCloudCutoffMax>20</pointCloudCutoffMax>
+          <imageTopicName>rgb/image_raw</imageTopicName>
+          <cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
+          <depthImageTopicName>depth/image_raw</depthImageTopicName>
+          <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+          <pointCloudTopicName>depth/points</pointCloudTopicName>
+          <frameName>camera_link</frameName>
+          <distortion_k1>0.0</distortion_k1>
+          <distortion_k2>0.0</distortion_k2>
+          <distortion_k3>0.0</distortion_k3>
+          <distortion_t1>0.0</distortion_t1>
+          <distortion_t2>0.0</distortion_t2>
+        </plugin>
+      </sensor>
+    </link>
+
+    <joint type="fixed" name="realsense_joint">
+      <parent>base_link</parent>
+      <child>realsense_link</child>
+      <pose>0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+      </axis>
+    </joint>
+
+
+
+
+
+
+
+    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+      <!-- Plugin update rate in Hz -->
+      <updateRate>30</updateRate>
+      <!-- Name of left joint, defaults to `left_joint` -->
+      <leftJoint>drum_joint4</leftJoint>
+      <!-- Name of right joint, defaults to `right_joint` -->
+      <rightJoint>drum_joint3</rightJoint>
+      <!-- The distance from the center of one wheel to the other, in meters, defaults to 0.34 m -->
+      <wheelSeparation>0.5380</wheelSeparation>
+      <!-- Diameter of the wheels, in meters, defaults to 0.15 m -->
+      <wheelDiameter>0.2410</wheelDiameter>
+      <!-- Wheel acceleration, in rad/s^2, defaults to 0.0 rad/s^2 -->
+      <wheelAcceleration>1.0</wheelAcceleration>
+      <!-- Maximum torque which the wheels can produce, in Nm, defaults to 5 Nm -->
+      <wheelTorque>300</wheelTorque>
+      <!-- Topic to receive geometry_msgs/Twist message commands, defaults to `cmd_vel` -->
+      <commandTopic>cmd_vel</commandTopic>
+      <!-- Topic to publish nav_msgs/Odometry messages, defaults to `odom` -->
+      <odometryTopic>robotodom</odometryTopic>
+      <!-- Odometry frame, defaults to `odom` -->
+      <odometryFrame>robotodom</odometryFrame>
+      <!-- Robot frame to calculate odometry from, defaults to `base_footprint` -->
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+      <!-- Odometry source, 0 for ENCODER, 1 for WORLD, defaults to WORLD -->
+      <odometrySource>1</odometrySource>
+      <!-- Set to true to publish transforms for the wheel links, defaults to false -->
+      <publishWheelTF>true</publishWheelTF>
+      <!-- Set to true to publish transforms for the odometry, defaults to true -->
+      <publishOdom>true</publishOdom>
+      <!-- Set to true to publish sensor_msgs/JointState on /joint_states for the wheel joints, defaults to false -->
+      <publishWheelJointState>true</publishWheelJointState>
+      <!-- Set to true to swap right and left wheels, defaults to true -->
+      <legacyMode>false</legacyMode>
+    </plugin>
+
+  </model>
+</sdf>

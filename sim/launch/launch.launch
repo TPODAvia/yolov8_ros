@@ -1,21 +1,22 @@
+<?xml version="1.0"?>
 <launch>
+	<arg name="paused" default="false"/>
+	<arg name="gui" default="true"/>
+    
+	<!-- Start Gazebo -->
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="paused" value="$(arg paused)"/>
+		<!-- <arg name="world_name" default="$(arg world)" /> -->
+		<arg name="gui" value="$(arg gui)"/>
+		<arg name="verbose" value="true"/>
+	</include>
 
-    <!-- Launch usb-cam node -->
-    <!-- <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" launch-prefix="xterm -e">
 
-        <param name="video_device" value="/dev/video0" />
-
-        <param name="image_width" value="640" />
-
-        <param name="image_height" value="480" />
- 
-        <param name="pixel_format" value="mjpeg" />
-  
-        <param name="camera_frame_id" value="usb_cam" />
-  
-        <param name="io_method" value="mmap"/>
-
-    </node> -->
+	<!-- any vehicle: iris, diff_rover, avia_vtol, typhoon_h480 etc -->
+	<arg name="vehicle" default="tank"/>
+	<arg name="arena" default="$(find sim)/models/$(arg vehicle)/$(arg vehicle).sdf"/>
+  	<node name="sdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+        args="-file $(arg arena) -sdf -z 0.15 -model $(arg vehicle)" />
 
 
     <node pkg="yolov8_ros" type="yolo_ros.py" name="yolov8_node" output="screen">
@@ -30,12 +31,12 @@
         <param name="img_topic" type="str" value="/camera/rgb/image_raw" />
 
         <!-- topic name for the detection output -->
-        <param name="center_depth_topic" type="str" value="/camera/depth/image_raw" />
-
+        <param name="center_offset_topic" type="str" value="yolov8_offset_center" />
         <param name="queue_size" type="int" value="1" />
 
         <!-- flag whether to also publish image with the visualized detections -->
-        <param name="visualize" type="bool" value="True" />
+        <param name="/visualize" type="bool" value="True" />
  
     </node>
+
 </launch>

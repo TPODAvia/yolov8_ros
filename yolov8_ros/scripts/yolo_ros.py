@@ -7,114 +7,56 @@ import numpy
 import rospy
 import sys
 
-from time import time
 from cv_bridge import CvBridge
 from ultralytics import YOLO
 
 from sensor_msgs.msg import Image
-from vision_msgs.msg import Detection2D,  BoundingBox2D
-from yolov8_ros_msgs.msg import BoundingBox, BoundingBoxes
-
+from yolov8_ros_msgs.msg import BoundingBox, BoundingBoxes, DepthPoint, DepthPoints
 from std_msgs.msg import Header
-from geometry_msgs.msg import Pose2D
-
-def create_header():
-    h = Header()
-    h.stamp = rospy.Time.now()
-    return h
 
 class yolo_class:
 
-    def __init__(self, weights_path,classes_path,img_topic,bbox_topic,queue_size,visualize):
+    def __init__(self, weights_path, classes_path, img_topic, depth_topic, queue_size, visualize):
 
         self._class_to_color = {}
         self.cv_bridge = CvBridge()
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print("Using Device: ", self.device)
-        
+
         self.yolo = YOLO("yolov8n.pt")
         self.yolo.fuse()
 
         self.img_subscriber = rospy.Subscriber(img_topic, Image, self.process_img_msg)
+        self.depht_subscriber = rospy.Subscriber(depth_topic, Image, self.depth_callback)
 
-        self.boundingbox_publisher = rospy.Publisher(bbox_topic, BoundingBox2D, queue_size=queue_size)
-        
+        self.position_pub = rospy.Publisher('/yolov8/BoundingBoxes',  BoundingBoxes, queue_size=1)
+        self.depth_points_pub = rospy.Publisher('/yolov8/DepthPoints',  DepthPoints, queue_size=1) 
+
         self.visualize = visualize
-        if self.visualize == True:
+        if self.visualize:
             self.visualization_publisher = rospy.Publisher("/yolo_visualization", Image, queue_size=queue_size)
 
-    
-    def process_img_msg(self, img_msg: Image):
+    def depth_callback(self, msg):
+            self.depth_image = self.cv_bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
 
-        start_time = time()
-        np_img_orig = self.cv_bridge.imgmsg_to_cv2(img_msg, desired_encoding='bgr8')
-        results = self.yolo(np_img_orig)
+    def process_img_msg(self, image):
 
-        frame = results[0].plot()
-        boxes = results[0].boxes
+        self.boundingBoxes = BoundingBoxes()
+        self.boundingBoxes.header = image.header
+        self.boundingBoxes.image_header = image.header
 
+        self.depth_Points = DepthPoints()
+        self.depth_Points.header = image.header
 
-        # IDK how to stack bbox together :(
-        bboxes = []
-        for i in range(len(boxes)):
-            for j in (0,1,2,3):
-                box = boxes[i].xyxy[0][j]
-                bboxes.append(box.item())
-                print(boxes[0].xyxy)
-                print(bboxes)
+        self.getImageStatus = True
+        self.color_image = numpy.frombuffer(image.data, dtype=numpy.uint8).reshape(480, 640, -1)
+        self.color_image = cv2.cvtColor(self.color_image, cv2.COLOR_BGR2RGB)
 
-        try:
-            
-            x1 = boxes[0].xyxy[0][0].item()
-            y1 = boxes[0].xyxy[0][1].item()
-            x2 = boxes[0].xyxy[0][2].item()
-            y2 = boxes[0].xyxy[0][3].item()
-
-            w = int(round(x2 - x1))
-            h = int(round(y2 - y1))
-            cx = int(round(x1 + w / 2))
-            cy = int(round(y1 + h / 2))
-            offset_cx = 640/2 - cx
-            offset_cy = 480/2 - cy
-
-            bounding_boxes = BoundingBox2D()
-
-            # header = create_header()
-            # bounding_boxes.header = header
-            # bounding_boxes
-
-
-            bounding_boxes.size_x = w
-            bounding_boxes.size_y = h
-            
-            # offset from center in pixels
-            bounding_boxes.center = Pose2D()
-            bounding_boxes.center.x = offset_cx
-            bounding_boxes.center.y = offset_cy
-
-            # print(bounding_boxes)
-            self.boundingbox_publisher.publish(bounding_boxes)  
-        except:   
-            pass
-
+        results = self.yolo(self.color_image, show=False, conf=0.3, verbose=False)
         self.dectshow(results, 480, 640)
-
-
-        if self.visualize == True:
-            end_time = time()
-            fps = 1/numpy.round(end_time - start_time, 2)
-
-            cv2.putText(frame, f'FPS: {int(fps)}', (20,70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,255,0), 2)
-
-            vis_msg = self.cv_bridge.cv2_to_imgmsg(frame)
-            self.visualization_publisher.publish(vis_msg)
+        cv2.waitKey(3)
 
     def dectshow(self, results, height, width):
-
-        self.frame = results[0].plot()
-        print(str(results[0].speed['inference']))
-        fps = 1000.0/ results[0].speed['inference']
-        cv2.putText(self.frame, f'FPS: {int(fps)}', (20,50), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2, cv2.LINE_AA)
 
         for result in results[0].boxes:
             boundingBox = BoundingBox()
@@ -124,24 +66,39 @@ class yolo_class:
             boundingBox.ymax = numpy.int64(result.xyxy[0][3].item())
             boundingBox.Class = results[0].names[result.cls.item()]
             boundingBox.probability = result.conf.item()
-            self.boundingBoxes.bounding_boxes.append(boundingBox)
-        self.position_pub.publish(self.boundingBoxes)
-        self.publish_image(self.frame, height, width)
 
-        if self.visualize :
+            # Calculate the center point of the bounding box
+            depth_point = DepthPoint()
+            depth_point.center_x = int(numpy.average([boundingBox.xmin, boundingBox.xmax]))
+            depth_point.center_y = int(numpy.average([boundingBox.ymin, boundingBox.ymax]))
+            depth_point.depth = self.depth_image[depth_point.center_y, depth_point.center_x]
+            depth_point.Class = results[0].names[result.cls.item()]
+
+            # Append
+            self.depth_Points.depth_point.append(depth_point)
+            self.boundingBoxes.bounding_boxes.append(boundingBox)
+
+        self.position_pub.publish(self.boundingBoxes)
+        self.depth_points_pub.publish(self.depth_Points)
+
+        if self.visualize:
+            self.frame = results[0].plot()
+            fps = 1000.0/ results[0].speed['inference']
+            cv2.putText(self.frame, f'FPS: {int(fps)}', (20,50), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2, cv2.LINE_AA)
+            self.publish_image(self.frame, height, width)
             cv2.imshow('YOLOv8', self.frame)
 
     def publish_image(self, imgdata, height, width):
         image_temp = Image()
         header = Header(stamp=rospy.Time.now())
-        header.frame_id = self.camera_frame
+        header.frame_id = ''
         image_temp.height = height
         image_temp.width = width
         image_temp.encoding = 'bgr8'
         image_temp.data = numpy.array(imgdata).tobytes()
         image_temp.header = header
         image_temp.step = width * 3
-        self.image_pub.publish(image_temp)
+        self.visualization_publisher.publish(image_temp)
 
 
 def main(args):
@@ -151,13 +108,10 @@ def main(args):
     weights_path = rospy.get_param("~weights_path", "")
     classes_path = rospy.get_param("~classes_path", "")
     img_topic = rospy.get_param("~img_topic", "/usb_cam/image_raw")
-    bbox_topic = rospy.get_param("~center_offset_topic", "/yolo_bbox" )
+    depth_topic = rospy.get_param("~center_depth_topic", "/camera/depth/image_raw" )
     queue_size = rospy.get_param("~queue_size", 1)
-    visualize = rospy.get_param("~visualize", False) # IDK why but open cv visualisation won't work :(
-    
-    
-    yolo_class(weights_path,classes_path,img_topic,bbox_topic,queue_size,visualize)
-
+    visualize = rospy.get_param("~visualize", False)
+    yolo_class(weights_path,classes_path,img_topic,depth_topic,queue_size,visualize)
 
     rospy.loginfo("YOLOv8 initialization complete")
     try:
