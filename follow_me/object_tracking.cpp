@@ -12,7 +12,7 @@ PX4Tracking::PX4Tracking(const ros::NodeHandle& nh, const ros::NodeHandle& nh_pr
   nh_(nh),
   nh_private_(nh_private) {
   Initialize();
-  cmdloop_timer_ = nh_.createTimer(ros::Duration(0.1), &PX4Tracking::CmdLoopCallback, this); //周期为0.1s
+  cmdloop_timer_ = nh_.createTimer(ros::Duration(0.1), &PX4Tracking::CmdLoopCallback, this); //The period is 0.1s
   //Subscribe to the position directly in front of the aircraft relative to the QR code
   ar_pose_sub_ = nh_private_.subscribe("/ar_pose_marker", 1, &PX4Tracking::ArPoseCallback, this,ros::TransportHints().tcpNoDelay());
 
@@ -52,9 +52,9 @@ Eigen::Vector3d PX4Tracking::TrackingPidProcess(Eigen::Vector3d &currentPos,Eige
 	else if(s_PidItemY.intergral <= -100) 
 		s_PidItemY.intergral = -100;
 	s_PidItemY.differential =  s_PidItemY.difference  - s_PidItemY.tempDiffer;
-  s_PidItemY.tempDiffer = s_PidItemY.difference;
-//	cout << "s_PidItemY.tempDiffer: " << s_PidItemY.tempDiffer << endl;
-//	cout << "s_PidItemY.differential: " << s_PidItemY.differential << endl;
+    s_PidItemY.tempDiffer = s_PidItemY.difference;
+	cout << "s_PidItemY.tempDiffer: " << s_PidItemY.tempDiffer << endl;
+	cout << "s_PidItemY.differential: " << s_PidItemY.differential << endl;
 	s_PidOut[0] = s_PidY.p*s_PidItemY.difference + s_PidY.d*s_PidItemY.differential + s_PidY.i*s_PidItemY.intergral;
 
 	/*PID control in left and right direction, output speed control in yaw direction*/
@@ -65,7 +65,7 @@ Eigen::Vector3d PX4Tracking::TrackingPidProcess(Eigen::Vector3d &currentPos,Eige
 	else if(s_PidItemYaw.intergral <= -100) 
 		s_PidItemYaw.intergral = -100;
 	s_PidItemYaw.differential =  s_PidItemYaw.difference  - s_PidItemYaw.tempDiffer;
-  s_PidItemYaw.tempDiffer = s_PidItemYaw.difference;
+    s_PidItemYaw.tempDiffer = s_PidItemYaw.difference;
 	s_PidOut[1] = s_PidYaw.p*s_PidItemYaw.difference + s_PidYaw.d*s_PidItemYaw.differential + s_PidYaw.i*s_PidItemYaw.intergral;
 
 	/*PID control in left and right direction, output speed control in z direction*/
@@ -76,7 +76,7 @@ Eigen::Vector3d PX4Tracking::TrackingPidProcess(Eigen::Vector3d &currentPos,Eige
 	else if(s_PidItemZ.intergral <= -100) 
 		s_PidItemZ.intergral = -100;
 	s_PidItemZ.differential =  s_PidItemZ.difference  - s_PidItemZ.tempDiffer;
-  s_PidItemZ.tempDiffer = s_PidItemZ.difference;
+    s_PidItemZ.tempDiffer = s_PidItemZ.difference;
 	s_PidOut[2] = s_PidZ.p*s_PidItemZ.difference + s_PidZ.d*s_PidItemZ.differential + s_PidZ.i*s_PidItemZ.intergral;
 
 	return s_PidOut;
@@ -102,19 +102,19 @@ void PX4Tracking::TrackingStateUpdate()
 {
 
 
-//	desire_vel_ = TrackingPidProcess(ar_pose_,desire_pose_);
-//	cout << "desire_vel_[0]:  "<< desire_vel_[0] <<endl;
-//	cout << "desire_vel_[1]:  "<< desire_vel_[1] <<endl;
-//	cout << "desire_vel_[2]:  "<< desire_vel_[2] <<endl;
-//	cout << "desire_vel_[3]:  "<< desire_vel_[3] <<endl;
-//	cout << "markers_yaw_: "  << markers_yaw_ << endl;
-//	cout << "ar_pose_[0]:  "<<  ar_pose_[0] << endl;
-//	cout << "ar_pose_[1]:  "<<  ar_pose_[1] << endl;
-//	cout << "ar_pose_[2]:  "<<  ar_pose_[2] << endl;
-//	cout << "desire_pose_[0]:  "<<  desire_pose_[0] << endl;
-//	cout << "desire_pose_[1]:  "<<  desire_pose_[1] << endl;
-//	cout << "desire_pose_[2]:  "<<  desire_pose_[2] << endl;
-//	cout << "detect_state : " << detect_state << endl;
+	desire_vel_ = TrackingPidProcess(ar_pose_,desire_pose_);
+	cout << "desire_vel_[0]:  "<< desire_vel_[0] <<endl;
+	cout << "desire_vel_[1]:  "<< desire_vel_[1] <<endl;
+	cout << "desire_vel_[2]:  "<< desire_vel_[2] <<endl;
+	cout << "desire_vel_[3]:  "<< desire_vel_[3] <<endl;
+	cout << "markers_yaw_: "  << markers_yaw_ << endl;
+	cout << "ar_pose_[0]:  "<<  ar_pose_[0] << endl;
+	cout << "ar_pose_[1]:  "<<  ar_pose_[1] << endl;
+	cout << "ar_pose_[2]:  "<<  ar_pose_[2] << endl;
+	cout << "desire_pose_[0]:  "<<  desire_pose_[0] << endl;
+	cout << "desire_pose_[1]:  "<<  desire_pose_[1] << endl;
+	cout << "desire_pose_[2]:  "<<  desire_pose_[2] << endl;
+	cout << "detect_state : " << detect_state << endl;
 	switch(TrackingState)
 	{
 		case WAITING:
@@ -298,8 +298,8 @@ void PX4Tracking::Initialize()
   desire_vel_[0] = 0;
   desire_vel_[1] = 0;
   desire_vel_[2] = 0;
-	desire_yzVel_[0]  = 0;
-	desire_yzVel_[1]  = 0;
+  desire_yzVel_[0]  = 0;
+  desire_yzVel_[1]  = 0;
   s_PidItemY.tempDiffer = 0;
   s_PidItemYaw.tempDiffer = 0;
   s_PidItemZ.tempDiffer = 0;
