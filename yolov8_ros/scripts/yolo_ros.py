@@ -69,9 +69,11 @@ class yolo_class:
 
             # Calculate the center point of the bounding box
             depth_point = DepthPoint()
-            depth_point.center_x = int(numpy.average([boundingBox.xmin, boundingBox.xmax]))
-            depth_point.center_y = int(numpy.average([boundingBox.ymin, boundingBox.ymax]))
-            depth_point.depth = self.depth_image[depth_point.center_y, depth_point.center_x]
+            depth_point.absolute_center_x = int(numpy.average([boundingBox.xmin, boundingBox.xmax]))
+            depth_point.absolute_center_y = int(numpy.average([boundingBox.ymin, boundingBox.ymax]))
+            depth_point.offset_center_x = depth_point.absolute_center_x - int(width/2)
+            depth_point.offset_center_y = depth_point.absolute_center_y - int(height/2)
+            depth_point.depth = self.depth_image[depth_point.absolute_center_y, depth_point.absolute_center_x]
             depth_point.Class = results[0].names[result.cls.item()]
 
             # Append

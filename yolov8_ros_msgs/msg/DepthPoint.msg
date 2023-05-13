@@ -1,5 +1,7 @@
 float64 probability
-int64 center_x
-int64 center_y
+int64 absolute_center_x
+int64 absolute_center_y
+int64 offset_center_x
+int64 offset_center_y
 float64 depth
 string Class

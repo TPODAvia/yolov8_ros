@@ -14,7 +14,7 @@
 
 	<!-- any vehicle: iris, diff_rover, avia_vtol, typhoon_h480 etc -->
 	<arg name="vehicle" default="tank"/>
-	<arg name="arena" default="$(find sim)/models/$(arg vehicle)/$(arg vehicle).sdf"/>
+	<arg name="arena" default="$(find sim_yolo)/models/$(arg vehicle)/$(arg vehicle).sdf"/>
   	<node name="sdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
         args="-file $(arg arena) -sdf -z 0.15 -model $(arg vehicle)" />
 
@@ -29,9 +29,7 @@
 
         <!-- topic name to subscribe to -->
         <param name="img_topic" type="str" value="/camera/rgb/image_raw" />
-
-        <!-- topic name for the detection output -->
-        <param name="center_offset_topic" type="str" value="yolov8_offset_center" />
+        <param name="center_depth_topic" type="str" value="/camera/depth/image_raw"/>
         <param name="queue_size" type="int" value="1" />
 
         <!-- flag whether to also publish image with the visualized detections -->
