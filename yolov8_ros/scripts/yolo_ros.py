@@ -23,7 +23,8 @@ class yolo_class:
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print("Using Device: ", self.device)
 
-        self.yolo = YOLO("yolov8n.pt")
+        self.yolo = YOLO(weights_path)
+        # self.yolo = YOLO("yolov8n.pt")
         self.yolo.fuse()
 
         self.img_subscriber = rospy.Subscriber(img_topic, Image, self.process_img_msg)
