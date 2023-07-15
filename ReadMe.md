@@ -7,27 +7,22 @@ Tested on Ubuntu 20.04 and ROS Noetic
 ## Installation
 ```s
 cd ~/ros_ws/src
-git clone https://github.com/TPODAvia/yolov8_ros.git
-pip3 install -r yolov8_ros/requirements.txt
+git clone https://github.com/Vamsi-IITI/yolov8_ros.git
 cd ~/ros_ws
 catkin_make
-sudo apt-get install ros-noetic-usb-cam
+```
+
+## Dependencies
+```s
+pip install ultralytics
 ```
 
 ## Usage
-```s
-roslaunch yolov8_ros yolov8.launch
-```
-or
-```s
-rosrun yolov8_ros yolo_ros.py
-rosrun usb_cam usb_cam_node
-```
-or
-```s
-roslaunch sim launch.launch
-```
+Place trained weights and txt file having the names of classes in model directory of yolov8_ros package ( i.e. yolov8_ros/model/ ) and give their path in launch file present in sim_yolo package
 
-## Use own weights and datasets
+```s
+roslaunch sim_yolo sim_yolo_demo.launch
+```
+Now test your model by bringing objects in gazebo in front of camera of robot/tank 
 
-in the development
+![Screenshot from 2023-07-14 15-18-06](https://github.com/Vamsi-IITI/yolov8_ros/assets/92263050/12047eb0-236f-4c0a-bb98-b3952a402750)
