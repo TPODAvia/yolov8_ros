@@ -110,3 +110,4 @@ def main():
 if __name__ == '__main__':
     main()
 ```
+> **Note :** The code above will output **nan** when object is placed too close or too far, that's not issue with this code. It actually occurs when object is out of the range of depth camera. pointCloudCutoff and pointCloudCutoffMax is the minimum and maximum distance for points, respectively.Set these parameters in gazebo plugin accordingly. Refer : [Here](http://classic.gazebosim.org/tutorials?tut=ros_depth_camera&cat=connect_ros)
