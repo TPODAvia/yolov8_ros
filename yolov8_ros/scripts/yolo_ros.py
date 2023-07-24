@@ -11,8 +11,11 @@ from cv_bridge import CvBridge
 from ultralytics import YOLO
 
 from sensor_msgs.msg import Image
-from yolov8_ros_msgs.msg import BoundingBox, BoundingBoxes, DepthPoint, DepthPoints
+from yolov8_ros_msgs.msg import BoundingBox, BoundingBoxes, DepthPoint, DepthPoints , Object, ObjectLocations
 from std_msgs.msg import Header
+
+from sensor_msgs.msg import CameraInfo
+# from geometry_msgs.msg import Point
 
 class yolo_class:
 
@@ -23,18 +26,27 @@ class yolo_class:
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print("Using Device: ", self.device)
 
-        self.yolo = YOLO("yolov8n.pt")
+        self.yolo = YOLO(weights_path)
+        # self.yolo = YOLO("yolov8n.pt")
         self.yolo.fuse()
 
         self.img_subscriber = rospy.Subscriber(img_topic, Image, self.process_img_msg)
         self.depht_subscriber = rospy.Subscriber(depth_topic, Image, self.depth_callback)
 
+        self.camera_info_subscriber = rospy.Subscriber("/camera/depth/camera_info", CameraInfo, self.camera_info_callback)
+
         self.position_pub = rospy.Publisher('/yolov8/BoundingBoxes',  BoundingBoxes, queue_size=1)
         self.depth_points_pub = rospy.Publisher('/yolov8/DepthPoints',  DepthPoints, queue_size=1) 
+
+        # Publish locations of detected objects (with respect to camera frame)
+        self.object_location_pub = rospy.Publisher('/yolov8/ObjectLocation', ObjectLocations, queue_size=1)
 
         self.visualize = visualize
         if self.visualize:
             self.visualization_publisher = rospy.Publisher("/yolo_visualization", Image, queue_size=queue_size)
+
+    def camera_info_callback(self, msg):
+        self.camera_info = msg
 
     def depth_callback(self, msg):
             self.depth_image = self.cv_bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
@@ -48,6 +60,9 @@ class yolo_class:
         self.depth_Points = DepthPoints()
         self.depth_Points.header = image.header
 
+        self.object_locations = ObjectLocations()
+        self.object_locations.header = image.header
+
         self.getImageStatus = True
         self.color_image = numpy.frombuffer(image.data, dtype=numpy.uint8).reshape(480, 640, -1)
         self.color_image = cv2.cvtColor(self.color_image, cv2.COLOR_BGR2RGB)
@@ -57,6 +72,17 @@ class yolo_class:
         cv2.waitKey(3)
 
     def dectshow(self, results, height, width):
+
+        # Intrinsic camera matrix for the raw (distorted) images.
+        #     [fx  0 cx]
+        # K = [ 0 fy cy]
+        #     [ 0  0  1]
+
+        # Extract camera intrinsic parameters
+        fx = self.camera_info.K[0]
+        fy = self.camera_info.K[4]
+        cx = self.camera_info.K[2]
+        cy = self.camera_info.K[5]
 
         for result in results[0].boxes:
             boundingBox = BoundingBox()
@@ -80,8 +106,26 @@ class yolo_class:
             self.depth_Points.depth_point.append(depth_point)
             self.boundingBoxes.bounding_boxes.append(boundingBox)
 
+            # Calculate object coordinates using knowledge of perspective projection transformation
+            object_x = (depth_point.absolute_center_x - cx) * depth_point.depth / fx
+            object_y = (depth_point.absolute_center_y - cy) * depth_point.depth / fy
+            object_z = depth_point.depth
+
+            # Publish object location (with respect to camera frame)
+            object_location = Object()
+            object_location.Class = results[0].names[result.cls.item()]
+            object_location.x = object_x
+            object_location.y = object_y
+            object_location.z = object_z
+            object_location.probability = result.conf.item()
+
+            ## Append
+            self.object_locations.object_location.append(object_location)
+
         self.position_pub.publish(self.boundingBoxes)
         self.depth_points_pub.publish(self.depth_Points)
+
+        self.object_location_pub.publish(self.object_locations)
 
         if self.visualize:
             self.frame = results[0].plot()
